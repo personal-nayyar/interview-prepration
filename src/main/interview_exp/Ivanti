@@ -1,0 +1,69 @@
+R1
+- project task explanation
+- Parenthesis checker
+- find pivoted index in sorted rotated array
+
+
+R2
+ - Java 8
+    class Employee {
+		String name;
+		int age;
+		String department;
+	}
+    - given a list of Employee objects, give a map of employee department to employee objects.
+    - given a list of Employee objects, give a map of employee department to employee namelist.
+        list.stream().collect(Collectors.groupingBy(Employee::getDept)); // return dept --> list of employee
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.mapping(Employee::getName, Collectors.toList()))); // return dept --> list of name
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.counting()));  // return dept --> count
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.summingInt(Employee::getSalary))); // return dept --> sum of salary
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.maxBy(Comparator.comparing(Employee::getSalary)))); // return dept --> max salary
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.minBy(Comparator.comparing(Employee::getSalary)))); // return dept --> min salary
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.averagingInt(Employee::getSalary))); // return dept --> avg salary
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.summarizingInt(Employee::getSalary)));// return dept --> summary of salary
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.mapping(Employee::getName, Collectors.joining(", ")))) ;// return dept --> comma separated name
+        list.stream().collect(Collectors.groupingBy(Employee::getDept, Collectors.mapping(Employee::getName, Collectors.joining(", ", "[", "]")))) ;// return dept --> comma separated name with prefix and suffix
+}
+- Parenthesis checker
+- m1(), m2(), m3()
+	- call in multithreading environment and collect return value
+	- m1() -> return 1
+	- m2() -> return 2
+	- m3() -> return 3
+	  Expected output: 1, 2, 3
+	  provide java multithreading code for above scenario
+	  code:
+	  public class Test {
+	  		public static void main(String[] args) {
+	  		    ExecutorService executorService = Executors.newFixedThreadPool(3);
+	  			Future<Integer> future1 = executorService.submit(() -> m1());
+	  			Future<Integer> future2 = executorService.submit(() -> m2());
+	  			Future<Integer> future3 = executorService.submit(() -> m3());
+	  			try {
+	  				System.out.println(future1.get());
+	  				System.out.println(future2.get());
+	  				System.out.println(future3.get());
+	  			} catch (InterruptedException | ExecutionException e) {
+	  				e.printStackTrace();
+	  			}
+	  		}
+	  }
+
+- given that an API is having latency, how would you optimise it.
+solution:
+1. API performance profiling
+2. use cache
+3. use async call
+4. use multithreading
+5. computation horizontal scaling and load balancer
+6. timeout and retries
+7. circuit breaker
+8. code and DB query optimisation
+9. CDN for static contents
+10. defined SLAs
+	- response time
+	- up time
+	- error rate
+
+R3
+ - Cloud experience

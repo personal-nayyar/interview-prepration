@@ -1,0 +1,498 @@
+Different memory area in java
+ - class area
+    - class level data
+    ex: static variables, static methods, static blocks, constant pool
+ - heap area
+	- object level data
+	ex: instance variables, instance methods, instance blocks, constructor
+ - stack area
+    - static memory allocation per thread
+    - grows and shrinks as per method calls and holds method specific data
+    ex: local variables, method arguments, return address
+ - program counter(PC) register
+    - holds address of current executing instruction per thread
+    ex: if-else, while, for, switch, try-catch, method calls
+ - native method stack
+    - native method specific and library data other than java
+    ex: JNI, C, C++, etc
+
+ Memory-error in java
+ - outOfMemoryError
+	- heap area full
+	- occurs:
+		- memory leak - allocating too many objects but not releasing it
+		- insufficient heap size configured for memory intensive application
+		ex:
+			while(true){
+				new Object();
+			}
+
+- stackOverflowError
+	- stack area full
+	- occurs:
+		- infinite recursion
+		- too many method calls
+	ex:
+		public static void main(String[] args){
+			main(args);
+		}
+JVM: Specification that provide runtime environment to execute java program
+    - Java Virtual Machine
+    - loads classes
+    - verify and execute code
+    - physically not exist
+JRE: JVM+set of libraries (rt.jar, jrt.jar, etc)
+JDK: JRE+set of tools (javac, java etc)
+
+class loading in java:
+ - loading the .class file into memory
+class loader:
+    bootstrap class loader: load core classes like java.lang.*, java.io.*, java.util.*
+    extension class loader: load additional classes from jre/ext/lib
+    system/application class loader: load classes from classpath
+
+Exception:
+	- abnormal condition that disrupts the normal flow of program execution
+	-checked exception
+		- checked at compile time
+		- compiler enforces to handle the exception either by try-catch or throws
+		- ex: IOException
+	-unchecked exception
+		- runtime exception
+		- ex: ArithmeticException
+
+when to create custom exception?
+	- exception specific to our application not present in java
+	- ex: InsufficientFundsException
+
+how to create custom exception?
+	- create a class that extends Exception class
+	- create a constructor that accepts String message
+	- call super(message) in the constructor
+	- ex:
+		public class InsufficientFundsException extends Exception{
+			public InsufficientFundsException(String message){
+				super(message);
+			}
+		}
+
+when to extend checked exception?
+	- when you enforce the calling method to handle it explicitly
+	- ex:
+		public void withdraw(double amount) throws InsufficientFundsException{
+			if(amount > balance){
+				throw new InsufficientFundsException("Insufficient funds");
+			}
+			balance -= amount;
+		}
+when to extend unchecked exception?
+	- when you don't enforce the calling method to handle it explicitly
+	- ex:
+		public void withdraw(double amount){
+			if(amount > balance){
+				throw new InsufficientFundsException("Insufficient funds");
+			}
+			balance -= amount;
+		}
+	- calling method can handle it explicitly if it wants to
+	- ex:
+		try{
+			account.withdraw(100);
+		}catch(InsufficientFundsException e){
+			System.out.println(e.getMessage());
+		}
+
+Different data structure in java
+- Array
+- List
+- Set
+- Map
+- Queue
+- Stack
+
+LinkedList implementation in java
+- doubly linked list
+- implements List, Queue, Deque interfaces
+- not synchronized
+- null elements are allowed
+- maintains insertion order
+- faster insertion and deletion
+- slower access
+
+ReST API
+- standard way of building web endpoints
+- Service to service sync communication
+- HTTP protocol
+- json or xml for data exchange
+
+
+REST API standards
+- client-server architecture
+- stateless
+- cacheable
+- layered system
+- uniform interface
+- code on demand (optional)
+
+ReST API methods
+- GET - read
+- POST - create
+- PUT - replace
+- PATCH - update
+- DELETE - delete
+
+
+Rest API to add an item to the shopping cart
+- POST /cart/items - add an item to the cart
+- POST /cart/items/{id} - update an item in the cart
+- GET /cart/items - get all items in the cart
+- GET /cart/items/{id} - get an item in the cart
+- DELETE /cart/items/{id} - delete an item in the cart
+- DELETE /cart/items - delete all items in the cart
+- PUT /cart/items - replace all items in the cart
+- PUT /cart/items/{id} - replace an item in the cart
+- PATCH /cart/items - update all items in the cart
+- PATCH /cart/items/{id} - update an item in the cart
+
+difference between PUT and PATCH and POST in REST API
+- POST - create a new resource
+- PUT - replace all fields in the resource
+- PATCH - update only the specified fields in the resource
+
+REST Status Codes
+- 1xx - informational
+	- 100 - continue
+	- 101 - switching protocols
+- 2xx - success
+	- 200 - OK
+		- request processed successfully
+	- 201 - created
+	- 202 - accepted
+		- request accepted but not processed
+	- 204 - no content
+		- request processed but no content returned
+- 3xx - redirection
+	- 301 - moved permanently
+	- 307 - temporary redirect
+- 4xx - client error
+	- 400 - bad request
+	- 401 - unauthenticated
+		- authentication failed  - identity not verified
+	- 403 - forbidden
+		- authentication successful but authorization failed - identity verified but permission denied
+	- 404 - not found
+	- 405 - method not allowed
+- 5xx - server error
+	- 500 - internal server error
+	- 503 - service unavailable
+	- 504 - gateway timeout
+	- 505 - HTTP version not supported
+
+when we encounter 401 or 403  error?
+- when we try to access a resource without authentication
+- when we try to access a resource without authorization
+
+how to handle 401 or 403 error?
+401
+- redirect to login page
+- redirect to error page
+403
+- redirect to home page
+- redirect to access denied page
+
+how to provide authentication in REST API?
+- spring web security
+	- public api- login/authentication api
+	- private api - requires authentication
+- jwt authentication
+	- jwt secret key
+	- jwt token
+		- header
+			- algorithm
+			- type
+		- payload
+			- issuer
+			- subject
+			- expiration
+			- audience
+			- custom claims
+		- signature
+			- base64 encoded header
+			- base64 encoded payload
+			- secret key
+			- algorithm
+	- add jwt authentication filter before username/password authentication filter
+		- extract jwt token from request header
+		- validate jwt token
+		- extract username from jwt token
+		- ex:
+			public class JwtAuthenticationFilter extends OncePerRequestFilter{
+				@Override
+				public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain){
+					String jwtToken = request.getHeader("Authorization");
+					if(jwtToken != null){
+						//validate jwt token
+						//set authentication in security context
+					}
+					chain.doFilter(request, response);
+				}
+			}
+
+Transaction in spring Boot
+@Transactional
+- @Transactional - method level
+- @Transactional(propagation = Propagation.REQUIRED) - method level // default
+	- if transaction exists, use it
+- @Transactional(propagation = Propagation.REQUIRES_NEW) - method level
+	- if transaction exists, suspend it and create a new transaction
+- @Transactional(propagation = Propagation.NESTED) - method level
+	- if transaction exists, create a savepoint and use it
+@EnableTransactionManagement - class level
+
+SQL query to return all the jobs that are in-progress from job table and tasks table based on start time and end time
+select * from job j inner join task t on j.id = t.job_id where t.start_time < j.end_time and t.end_time > j.start_time;
+
+any situation where you stuck and how you resolved it?
+		- merchant-analytics
+    		- situation:
+    			merchant-analytics was taking too much time to ingestion pipeline.
+    		- choice/action:
+    			- I've analysed the problem and found that we are using ES for search and analytics both.
+    			- Set elasticsearch refresh interval to 10 min.
+    			- I've proposed to use spark for analytics and ES for search only(no agg/computation on elasticsearch).
+    			- I've implemented the same and it was working fine.
+    		- outcome:
+    			- we were able to reduce ingestion time from 2 hours to 30 mins.
+
+    	- merchant-analytics
+    		- situation:
+    			merchant-analytics query was having high latency.
+    		- choice/action:
+    			- I've analysed the documents modeling and optimised to use keyword type for aggregation fields.
+    		- outcome:
+    			- we were able to reduce query latency from 2 minutes to 30 secs.
+    			- we were able to reduce ES cost from 32TB to 23TB.
+
+    	- merchant-analytics
+    		- situation:
+    			High latency for customer analytics query.
+    		- choice/action:
+    			- Database partitioning/sharding
+    				sharded mid_custid_master[3TB] table on mids.
+    				- mid_custid_master_0, mid_custid_master_1, mid_custid_master_2, mid_custid_master_3, mid_custid_master_4, mid_custid_master_5, mid_custid_master_6, mid_custid_master_7, mid_custid_master_8, mid_custid_master_9
+    				- use field type as keyword for aggregation fields
+    		- outcome:
+    			- we were able to reduce query latency from 2 minutes to 30 secs.
+    			- we were able to reduce ES cost from 32TB to 23TB.
+
+find the middle of the linkedList
+	- two pointers
+	- one pointer moves one node at a time
+	- another pointer moves two nodes at a time
+	- when the second pointer reaches the end, the first pointer will be at the middle
+
+given arrival and departure of train,
+	- give the minimum number of platforms required
+	- time interval when the maximum number of trains are present
+
+
+R2
+----
+Project explanation
+in project what have you analysed and what have you implemented to fix
+	- merchant-analytics
+		- situation:
+			slow ingestion pipelines
+			merchant-analytics was taking too much time to ingestion pipeline.
+		- choice/action:
+			- I've analysed the problem and found that we are using ES for search and analytics both.
+			- Set elasticsearch refresh interval to 10 min.
+			- I've proposed to use spark for analytics and ES for search only(no agg/computation on elasticsearch).
+			- I've implemented the same and it was working fine.
+		- outcome:
+			- we were able to reduce ingestion time from 2 hours to 30 mins.
+
+	- merchant-analytics
+		- situation:
+			High latency for customer analytics query.
+		- choice/action:
+			- Database partitioning/sharding
+				sharded mid_custid_master[3TB] table on mids.
+				- mid_custid_master_0, mid_custid_master_1, mid_custid_master_2, mid_custid_master_3, mid_custid_master_4, mid_custid_master_5, mid_custid_master_6, mid_custid_master_7, mid_custid_master_8, mid_custid_master_9
+				- use field type as keyword for aggregation fields
+		- outcome:
+			- we were able to reduce query latency from 2 minutes to 30 secs.
+			- we were able to reduce ES cost from 32TB to 23TB.
+
+Data:
+	Structured:
+		- Relational
+	Semi-structured:
+		- JSON
+		- XML
+	Unstructured:
+		- logs
+		- images
+
+RDD vs DataFrame vs DataSet
+
+- Dataset/Dataframe ---> Catalyst Optimizer ---> (optimised)RDD ---> DAG ---> Spark Engine ---> Cluster Manager ---> Cluster
+
+
+RDD:
+	- Data  500MB
+		- partitions1 (128 HDFS) - Node 1
+		- partitions2 (128 HDFS) - Node 2
+		- partitions3 (128 HDFS) - Node 2
+		- partitions4 (128 HDFS) - Node 3
+
+	- operations:
+		- transformation
+			- map
+			- filter
+			- flatMap
+			- groupByKey
+			- reduceByKey
+			- join
+			- cogroup
+			- union
+			- intersection
+			- distinct
+		- action
+			- collect
+			- count
+			- countByValue
+			- take
+			- top
+			- reduce
+
+DAG:
+	- DAG - Directed Acyclic Graph
+	- DAG is a logical representation of RDD transformations.
+	- DAG is created when an action is called on RDD
+
+
+
+RDD vs Dataframe vs DataSet
+RDD:
+	- Distributed collection of elements
+	- immutable
+	- unstructured
+	- no compile time type safety
+	- no optimization
+	- API
+	- full control but complex
+Dataframe:
+	- Organized into named columns
+	- immutable
+	- structured
+	- compile time type safety
+	- optimization : catalyst optimizer
+	- API
+	- limited control but simple
+Dataset:
+	- Extension of dataframe
+	- immutable
+	- structured and semi-structured
+	- compile time type safety
+	- optimization: catalyst optimizer
+	- API
+	- advance Encoders
+	- limited control but simple
+
+ConcurrentHashMap
+
+ConcurrentHashMap vs HashTable vs SynchronizedMap
+ConcurrentHashMap:
+	- locking at segment level
+	- better performance
+	- null key and null value not allowed
+	- iterator is weakly consistent but not fail-fast
+	- no blocking
+HashTable:
+	- locking at object level
+	- poor performance
+	- null key and null value not allowed
+	- iterator is fail-fast
+	- blocking
+SynchronizedMap:
+	- locking at object level
+	- poor performance
+	- null key and null value allowed
+	- iterator is fail-fast
+	- blocking
+
+
+
+SOLID principles
+	- Single responsibility principle
+	- Open/closed principle
+	- Liskov substitution principle
+	- Interface segregation principle
+	- Dependency inversion principle
+
+Mysql locking mechanism
+	- shared lock
+	- exclusive lock
+	Locking level:
+		- table level
+		- row level
+
+locking Strategies:
+	- optimistic lock
+		- assuming less chance of collision
+		- acquired lock only when updating the record
+	- pessimistic lock
+		- assuming more chance of collision
+		- acquired lock from start to end of transaction
+
+Kafka
+	Consumer group
+	Partition
+	re-balancing
+how do you ensure there is no data loss in kafka while consuming from a topic
+how do ensure there is no data loss in kafka while consumer is down
+how do you ensure there is no data loss in kafka while producer is down
+how do you ensure there is no data loss in kafka while broker is down
+how do you ensure there is no data loss in kafka while zookeeper is down
+how do you ensure there is no data loss in kafka while consuming from a topic
+
+Which CAP properties are followed by elasticSearch
+Middle in linkedList
+
+how spark steaming consume data from kafka
+approach:
+	Kafka-direct-connect: direct connection b/w spark streaming and kafka topic+partitions to consumer data in batch
+	Receiver approach: create Receiver on spark worker node to receive data and store -> then processed by spark-streaming
+	structured-streaming-approach: structured+sql-query
+
+SpringBoot @ConditionalOnProperty annotation
+SpringBoot @Conditional annotation
+SpringBoot @ConditionalOnBean annotation
+
+how do maintain transaction in springBoot
+	@Transaction
+can you @Transaction on private method - No
+
+@Component: generalization, tell spring to maintain a bean of it
+@Repository: persistence layer, additional functionality such as query, exception
+@Service: Service layer, addition dependency injection
+@Controller : Dispatcher servlet use them for Http request mapping
+@Configuration: indicates that class contains bean definitions
+
+
+World wide ecommerce project
+	- How to do maintain the data consistency across the globe
+		- Distributed Centralized data store:
+			MongoDB, Cassandra
+		- Distributed transaction management
+		- Data replication
+		- event driven system for eventual-consistency
+
+	- how to do maintain time in different time zones
+		- use UTC time stamp
+
+Docker-eco System experience
+what do you do in code review practices: SOLID principal
+how deployment in your project - ec2, jenkins
+

@@ -1,0 +1,33 @@
+Array/String
+    - sorted
+        -Yes
+            - Two pointers
+            - Binary search
+        -No
+            - Question
+                - number of ways, min/max value
+                    - need to take decision, decision are affected, overlapping prob
+                        - Yes
+                            - DP
+                        - No
+                            - Greedy
+                - continuously finding min/max
+                    - element are added/remove to find sol
+                        - Sliding window
+                    - max/min value itself added/removed
+                        - Heap/queue
+                - subarray/substring
+                    - sliding window
+                    - counting Hashmap
+                - finding a specific element
+                    - Hashmap/Hashset
+
+
+
+Graph/Tree
+    - Question looking for
+        - specific level/depth
+        - shortest path/fewest steps
+            - BFS
+        Else
+            - DFS

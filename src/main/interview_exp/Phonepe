@@ -1,0 +1,85 @@
+R1-machine
+--
+
+R2-design
+-------
+Design Highly Scalable Distributed Job Scheduler and Execution platform for your company
+
+Scheduler executes short-lived jobs which can be of multiple types.
+
+Initial version of platform supports following job types:
+1) Execute a pre-uploaded JAR at an internal object store
+2) Execute an API call to some internal service
+
+Platform should be extensible to easily add new job types.
+
+Job scheduling:
+1. One time Job
+2. repetitive, where repetition period can be from 1min to 1 month.
+
+Clients:
+Clients of this service are other services.
+Clients should be able to create and read job configuration, execution status for last X months.
+
+
+high level Design
+    schedular-service:
+    execution-service:
+    Client-API-service: client submit job and configuration and get status
+DB schema
+    Nosql: MongoDB
+    Clinet:
+    {
+        clientId
+        clienenName
+        clientSecret:{}
+    }
+    Job :
+    {
+        jobId
+        clientId
+        jobType: {}
+        scheduleType:{}
+    }
+    Execution-log-metric:
+    {
+        executionId
+        jobId
+        scheduleTime
+        startTime
+        endTime
+        status
+    }
+API Design:
+    POST service-domain/api/jobs  -- Scheduling job
+        request-body:
+        {
+            client-id:
+            jobType:{
+                "type":  "Email-Notificaion"
+                // processor for email-notification
+                "path":
+                "api"
+            }
+            schedule:{
+                scheduleTime:
+                scheduleType:
+                repeatInterval:
+            }
+        }
+        response:
+        {
+            "jobId": ""
+        }
+    GET  service-domain/api/jobs/jobId -- getting job
+
+
+    execution-engine:
+        11:00 --- {job1, job2, job3}
+        11:10 --- {job4, job5}
+
+        swithc(jobType){
+            processor = getProcessor(jobType);
+            processor.exeute();
+        }
+low level design

@@ -1,0 +1,56 @@
+Indeed
+------
+key factor for system availability
+  - fault tolerance
+    - microservices
+    - master-slave
+        - fail-over: switch to backup/replica
+        - fallback: switch back to primary
+
+ - redundancy/replication
+    - Hardware redundancy
+        - multi-instance applications
+    - data redundancy
+        - primary and replica
+
+  - scalability
+  	- vertical scaling: add more resources to existing server
+  	- horizontal scaling: add more servers
+
+  - load balancing
+		- distribute load across multiple servers
+
+  - Recovery-Automated
+  	- backup
+  	    - backup server and snapshots
+  	- restore from backup
+  	- circuit breaker
+  	   - prevent cascading failures and fallback response
+
+  - defined SLA(Service Level Agreement)
+  	- uptime
+  	- response time
+  	- error rate
+
+  - Monitoring and alerting
+	- metrics
+	- logs
+	- alerts
+
+key factor for data-consistency
+    - Data accuracy
+    - Data Completeness
+    - Data Quality: cleaness, deduplication, standardization
+    - Data governance
+    - Data security
+    - Data Migration: trusted ETL tool
+
+
+Method overloading
+	- same method name
+	- different parameters
+- Method overriding
+	- same method name
+	- same parameters
+	- different implementation
+Q: If you have a list of domains along with their visit counts, and you want to calculate the subdomain count based on the given data, you can achieve this in Java using a Map to store the counts for each subdomain
